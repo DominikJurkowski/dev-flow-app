@@ -1,6 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import Theme from "./Theme"
+import MobileNavigation from "./MobileNavigation"
 
 const Navigation = () => {
   return (
@@ -10,7 +11,10 @@ const Navigation = () => {
             <p className="h2-bold font-space-grotesk text-dark-100 dark:text-light-900 max-sm:hidden">Dev<span className="text-primary-500">Flow</span></p>
         </Link>
         <p>Global Search</p>
-        <div className="flex-between gap-5"><Theme /></div>
+        <div className="flex-between gap-5">
+          <Theme />
+          <MobileNavigation />
+        </div>
     </nav>
   )
 }
