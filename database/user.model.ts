@@ -5,7 +5,7 @@ export interface IUser {
     username: string;
     email: string;
     bio?: string;
-    image: string;
+    image?: string;
     location?: string;
     portfolio?: string;
     reputation?: number;
@@ -19,7 +19,7 @@ const UserSchema = new Schema(
     username: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     bio: { type: String },
-    image: { type: String, required: true },
+    image: { type: String, required: false, default: '' },
     location: { type: String },
     portfolio: { type: String },
     reputation: { type: Number, default: 0 },
@@ -27,6 +27,10 @@ const UserSchema = new Schema(
   { timestamps: true }
 );
 
-const User = models.user || model<IUser>("User", UserSchema);
+// Clear cached model so schema changes (e.g. image optional) apply; avoids "Path `image` is required" after edits
+if (typeof models?.User !== 'undefined') {
+  delete models.User;
+}
+const User = model<IUser>("User", UserSchema);
 
 export default User;
