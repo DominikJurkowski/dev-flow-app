@@ -8,16 +8,25 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import dynamic from 'next/dynamic';
 import { MDXEditorMethods } from '@mdxeditor/editor';
-import { useRef } from 'react';
+import { useRef, useTransition } from 'react';
 import z from 'zod';
 import TagCard from '../cards/TagCard';
+import { createQuestion } from '@/lib/actions/question.action';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import ROUTES from '@/constants/routes';
+import { Loader2Icon } from 'lucide-react';
 
 const Editor = dynamic(() => import('../editor/Editor'), {
   ssr: false,
 });
 
 const QuestionForm = () => {
+  const router = useRouter();
   const editorRef = useRef<MDXEditorMethods>(null);
+
+  const [isPending, startTransition] = useTransition();
+
   const form = useForm<z.infer<typeof AskQuestionSchema>>({
     resolver: zodResolver(AskQuestionSchema),
     defaultValues: {
@@ -27,10 +36,18 @@ const QuestionForm = () => {
     },
   });
 
-  const handleFormSubmit = (data: z.infer<typeof AskQuestionSchema>) => {
+  const handleFormSubmit = async (data: z.infer<typeof AskQuestionSchema>) => {
     console.log(data);
     console.log('Form submitted');
     console.log(form.getValues());
+    startTransition(async () => {
+      const result = await createQuestion(data);
+      if (result.success) {
+        toast.success('Question created successfully');
+        if (result.data) router.push(ROUTES.QUESTION(result.data?._id));
+        else toast.error(result.error?.message || 'Failed to create question');
+      }
+    });
   };
 
   const handleTagRemove = (tag: string, field: { value: string[] }) => {
@@ -123,11 +140,19 @@ const QuestionForm = () => {
       <Field orientation="vertical" className="mt-6">
         <Button
           type="submit"
+          disabled={isPending}
           form="question-form"
           className="primary-gradient paragraph-medium rounded-2 text-light-900! font-inter min-h-12 w-full cursor-pointer px-4 py-3"
           //   disabled={form.formState.isSubmitting}
         >
-          Submit
+          {isPending ? (
+            <>
+              <Loader2Icon className="mr-2 size-4 animate-spin" />
+              <span>Submitting...</span>
+            </>
+          ) : (
+            'Ask a Question'
+          )}
         </Button>
       </Field>
     </>
