@@ -1,31 +1,31 @@
-// import { auth } from '@/auth';
-// import QuestionForm from '@/components/forms/QuestionForm';
-// import ROUTES from '@/constants/routes';
-// // import { getQuestion } from '@/lib/actions/question.action';
-// import { notFound, redirect } from 'next/navigation';
+import { auth } from '@/auth';
+import QuestionForm from '@/components/forms/QuestionForm';
+import ROUTES from '@/constants/routes';
+import { getQuestion } from '@/lib/actions/question.action';
+import { notFound, redirect } from 'next/navigation';
 
-// const EditQuestion = async ({ params }: RouteParams) => {
-//   const { id } = await params;
+const EditQuestion = async ({ params }: RouteParams) => {
+  const { id } = await params;
 
-//   if (!id) return notFound();
+  if (!id) return notFound();
 
-//   const session = await auth();
+  const session = await auth();
 
-//   if (!session) return redirect(ROUTES.SIGN_IN);
+  if (!session) return redirect(ROUTES.SIGN_IN);
 
-//   // const { data: question, success } = await getQuestion({ questionId: id });
+  const { data: question, success } = await getQuestion({ questionId: id });
 
-//   if (!success) return notFound();
+  if (!success) return notFound();
 
-//   if (question?.author.toString() !== session?.user?.id) return redirect(ROUTES.QUESTION(id));
+  if (question?.author.toString() !== session?.user?.id) return redirect(ROUTES.QUESTION(id));
 
-//   return (
-//     <main>
-//       <h1>Edit the Question</h1>
+  return (
+    <main>
+      <h1>Edit the Question</h1>
 
-//       <QuestionForm question={question} isEdit />
-//     </main>
-//   );
-// };
+      <QuestionForm question={question} isEdit />
+    </main>
+  );
+};
 
-// export default EditQuestion;
+export default EditQuestion;
