@@ -12,9 +12,11 @@ export const getDeviconClassName = (techName: string) => {
   return techMap[normalizedTechName] ? `${techMap[normalizedTechName]} colored` : 'devicon-devicon-plain';
 };
 
-export const getTimeStamp = (date: Date) => {
+export const getTimeStamp = (createdAt: Date ) => {
+  const date = new Date(createdAt);
   const now = new Date();
-  const secondsAgo = Math.floor((now.getTime() - date.getTime()) / 1000);
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  const secondsAgo = Math.floor((now.getTime() - dateObj.getTime()) / 1000);
 
   const units = [
     { lable: 'year', seconds: 31536000 },
